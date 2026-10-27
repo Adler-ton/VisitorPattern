@@ -1,0 +1,29 @@
+@startuml
+skinparam classAttributeIconSize 0
+interface FileSystemElement { +accept(visitor: FileSystemVisitor): void }
+interface FileSystemVisitor { +visitFile(file: FileElement): void
++visitDirectory(directory: DirectoryElement): void }
+class FileElement { -name: String
+-sizeBytes: long
++accept(visitor: FileSystemVisitor): void
++getName(): String
++getSizeBytes(): long }
+class DirectoryElement { -name: String
+-children: List<FileSystemElement>
++add(child: FileSystemElement): void
++getChildren(): List<FileSystemElement>
++accept(visitor: FileSystemVisitor): void }
+class SizeCalculatorVisitor { -totalBytes: long
++getTotalBytes(): long }
+class SearchVisitor { -query: String
+-matches: List<String>
++getMatches(): List<String> }
+FileSystemElement <|.. FileElement
+FileSystemElement <|.. DirectoryElement
+FileSystemVisitor <|.. SizeCalculatorVisitor
+FileSystemVisitor <|.. SearchVisitor
+DirectoryElement "1" o-- "0..*" FileSystemElement : children
+FileSystemElement ..> FileSystemVisitor : accept
+FileSystemVisitor ..> FileElement : visitFile
+FileSystemVisitor ..> DirectoryElement : visitDirectory
+@enduml
